@@ -99,7 +99,15 @@ class AccountAssetInherit(models.Model):
             else:
                 pass
 
+
     def calculate_total_asset(self):
+        return self.env.ref('account_immo.action_report_asset_depreciation').report_action(self)
+
+    @api.model
+    def get_category_total(self, assets, category):
+        """Calculate total value for assets in a category"""
+        category_assets = assets.filtered(lambda x: x.model_id == category)
+        return sum(asset.original_value for asset in category_assets)
 
 
 
