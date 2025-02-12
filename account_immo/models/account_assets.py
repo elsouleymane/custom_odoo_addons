@@ -89,26 +89,19 @@ class AccountAssetInherit(models.Model):
 
         return res
 
-    @api.onchange('account_asset_id')
-    def compute_default_model_id(self):
-        for rec in self:
-            model = self.env['account.asset'].search([('state','=','model'),('account_asset_id','=',rec.account_asset_id.id)])
-            if model:
-                rec.model_id = model.id
+    # @api.onchange('account_asset_id')
+    # def compute_default_model_id(self):
+    #     for rec in self:
+    #         model = self.env['account.asset'].search([('state','=','model'),('account_asset_id','=',rec.account_asset_id.id)])
+    #         if model:
+    #             rec.model_id = model.id
+    #
+    #         else:
+    #             pass
 
-            else:
-                pass
-
-
+#################################################################################################################################################################################
     def calculate_total_asset(self):
         return self.env.ref('account_immo.action_report_asset_depreciation').report_action(self)
-
-    @api.model
-    def get_category_total(self, assets, category):
-        """Calculate total value for assets in a category"""
-        category_assets = assets.filtered(lambda x: x.model_id == category)
-        return sum(asset.original_value for asset in category_assets)
-
 
 
     @api.constrains('code')
@@ -574,3 +567,25 @@ class AccountAssetInherit(models.Model):
 
 
 
+class ReportAssetDepreciation(models.AbstractModel):
+            _name = 'report.account_immo.report_asset_depreciation'
+            _description = 'Asset Depreciation Report'
+
+            @api.model
+            def _get_report_values(self, docids, data=None):
+                docs = self.env['account.asset'].browse(docids)
+                grouped_docs = {}
+                category_totals = {}
+                for asset in docs:
+                    category = asset.model_id.name if asset.model_id else 'Sans Catégorie'
+                    if category not in grouped_docs:
+                        grouped_docs[category] = []
+                        category_totals[category] = 0
+                    grouped_docs[category].append(asset)
+                    category_totals[category] += asset.original_value
+                return {
+                    'doc_ids': docids,
+                    'doc_model': 'account.asset',
+                    'grouped_docs': grouped_docs,
+                    'category_totals': category_totals,
+                }
