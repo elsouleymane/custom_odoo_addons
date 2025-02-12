@@ -1,0 +1,105 @@
+<odoo>
+    <record id="account_payment_report_print" model="ir.actions.report">
+        <field name="name">Print Facture client</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">gestion.account_payment_report</field>
+        <field name="report_file">account.account_payment_report</field>
+        <field name="binding_model_id" ref="model_account_move"/>
+        <field name="binding_type">report</field>
+    </record>
+
+
+        <template id="account_payment_report">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.basic_layout">
+                        <div class="row">
+                            <div class="text-center">
+                                <h2>Détails de paiement</h2>
+                            </div>
+                        </div>
+                        <div class="page">
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="mb-2">
+                                        <strong>Référence de paiement:</strong>
+                                        <span t-esc="o.name"/>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Libellé:</strong>
+                                        <span t-esc="o.partner_id.name"/>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Montant:</strong>
+                                        <span t-esc="o.amount_total"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <t t-if="o.invoice_payments_widget">
+                                <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Référence</th>
+                                        <th>Libellé</th>
+                                        <th class="text-end">Montant Fact.</th>
+                                        <th class="text-end">Montant Payé</th>
+                                        <th class="text-end">Reste</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.sudo().invoice_payments_widget['content']" t-as="payment">
+                                        <tr>
+                                        <td>
+                                            <span t-esc="payment.get('date')" t-options='{"widget": "date"}'/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="o.partner_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="payment.get('ref')"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <span t-esc="o.amount_total"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                        <td class="text-end">
+                                            <span t-esc="payment.get('amount')"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                        <td class="text-end">
+                                            <span t-esc="o.amount_residual"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="border-black font-weight-bold">
+                                        <td colspan="3">Total</td>
+                                        <td class="text-end">
+                                            <span t-esc="o.amount_total"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                        <td class="text-end">
+                                            <span t-esc="payment.get('amount')"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                        <td class="text-end">
+                                            <span t-esc="o.amount_residual"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+</odoo>

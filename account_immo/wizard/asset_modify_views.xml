@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="asset_modify_form_inherit">
+        <field name="name">wizard.asset.modify.form.inherit</field>
+        <field name="model">asset.modify</field>
+        <field name="inherit_id" ref="account_asset.asset_modify_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='gain_account_id']"
+                   position="attributes">
+                <attribute name="string">Valeur comptable cession</attribute>
+            </xpath>
+            <xpath expr="//field[@name='loss_account_id']"
+                   position="attributes">
+                <attribute name="string">Valeur comptable cession</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

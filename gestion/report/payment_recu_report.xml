@@ -1,0 +1,65 @@
+<odoo>
+    <record id="report_account_payment_inherit" model="ir.actions.report">
+        <field name="name">Mon Recu Payment</field>
+        <field name="model">account.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">gestion.template_payment_recu_print</field>
+        <field name="report_file">account.template_payment_recu_print</field>
+        <field name="binding_model_id" ref="model_account_payment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="template_payment_recu_print">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <t t-set="o" t-value="o.with_context(lang=lang)"/>
+                    <t t-set="values" t-value="o._get_payment_receipt_report_values()"/>
+                    <div class="page">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <strong>Référence de paiement: </strong>
+<!--                                <span t-field="o.name"/>-->
+                                <br/>
+<!--                                <strong>Libellé:<span t-field="o.memo"></span></strong>-->
+                                <br/>
+                                <strong>Montant: </strong>
+                                <span t-field="o.amount"
+                                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                <div class="oe_structure"/>
+                                <i>Payé le <span t-field="o.date"></span></i>
+                            </div>
+                        </div>
+                        <table name="invoices"
+                               t-if="values['display_invoices']"
+                               class="table table-sm">
+                            <t t-set="invoices" t-value="o.reconciled_invoice_ids or o.reconciled_bill_ids"/>
+
+                            <thead>
+                                <tr>
+                                    <th><span>Date</span></th>
+                                    <th><span>Référence</span></th>
+                                    <th><span>Libelé</span></th>
+                                    <th class="text-end"><span>Montant Fact.</span></th>
+                                    <th><span>Montant Payé</span></th>
+                                    <th><span>Reste</span></th>
+                                </tr>
+                            </thead>
+                            <tbody t-foreach="invoices" t-as="inv">
+                                <tr>
+                                    <td><span t-field="o.date"></span></td>
+                                    <td><span t-field="o.name"></span></td>
+<!--                                    <td><span t-field="o.memo"></span></td>-->
+                                    <td><span t-field="inv.amount_total"></span></td>
+                                    <td><span t-field="o.amount"></span></td>
+                                    <td><span t-field="inv.amount_residual"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

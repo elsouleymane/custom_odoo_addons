@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Category Totals Report -->
+<!--    <record id="action_report_asset_category_totals" model="ir.actions.report">-->
+<!--        <field name="name">Totaux par catégorie</field>-->
+<!--        <field name="model">account.asset</field>-->
+<!--        <field name="report_type">qweb-pdf</field>-->
+<!--        <field name="report_name">gestion.report_asset_category_totals</field>-->
+<!--        <field name="report_file">gestion.report_asset_category_totals</field>-->
+<!--        <field name="binding_model_id" ref="account_asset.model_account_asset"/>-->
+<!--        <field name="binding_type">report</field>-->
+<!--    </record>-->
+
+<!--    &lt;!&ndash; Depreciation Report &ndash;&gt;-->
+<!--    <record id="action_report_asset_depreciation" model="ir.actions.report">-->
+<!--        <field name="name">Rapport d'amortissement</field>-->
+<!--        <field name="model">account.asset</field>-->
+<!--        <field name="report_type">qweb-pdf</field>-->
+<!--        <field name="report_name">gestion.report_asset_depreciation</field>-->
+<!--        <field name="report_file">gestion.report_asset_depreciation</field>-->
+<!--        <field name="binding_model_id" ref="account_asset.model_account_asset"/>-->
+<!--        <field name="binding_type">report</field>-->
+<!--    </record>-->
+
+    <!-- Category Totals Report Template -->
+<!--    <template id="report_asset_category_totals">-->
+<!--        <t t-call="web.html_container">-->
+<!--            <t t-call="web.external_layout">-->
+<!--                <div class="page">-->
+<!--                    <h2>Totaux par catégorie d'immobilisation</h2>-->
+<!--                    &lt;!&ndash; Category Summary Table &ndash;&gt;-->
+<!--                    <table class="table table-sm table-bordered">-->
+<!--                        <thead>-->
+<!--                            <tr>-->
+<!--                                <th>Catégorie</th>-->
+<!--                                <th>Nombre</th>-->
+<!--                                <th>Valeur d'acquisition</th>-->
+<!--                                <th>Amortissements</th>-->
+<!--                                <th>Valeur nette</th>-->
+<!--                            </tr>-->
+<!--                        </thead>-->
+<!--                        <tbody>-->
+<!--                            <t t-foreach="docs.grouped_by_category()" t-as="category">-->
+<!--                                <tr>-->
+<!--                                    <td><span t-field="category.name"/></td>-->
+<!--                                    <td><t t-esc="category.asset_count"/></td>-->
+<!--                                    <td class="text-right">-->
+<!--                                        <span t-field="category.total_original_value"-->
+<!--                                              t-options='{"widget": "monetary"}'/>-->
+<!--                                    </td>-->
+<!--                                    <td class="text-right">-->
+<!--                                        <span t-field="category.total_depreciation"-->
+<!--                                              t-options='{"widget": "monetary"}'/>-->
+<!--                                    </td>-->
+<!--                                    <td class="text-right">-->
+<!--                                        <span t-field="category.total_net_value"-->
+<!--                                              t-options='{"widget": "monetary"}'/>-->
+<!--                                    </td>-->
+<!--                                </tr>-->
+<!--                            </t>-->
+<!--                        </tbody>-->
+<!--                        <tfoot>-->
+<!--                            <tr>-->
+<!--                                <td><strong>Total</strong></td>-->
+<!--                                <td><strong t-esc="len(docs)"/></td>-->
+<!--                                <td class="text-right">-->
+<!--                                    <strong t-esc="sum(docs.mapped('original_value'))"-->
+<!--                                            t-options='{"widget": "monetary"}'/>-->
+<!--                                </td>-->
+<!--                                <td class="text-right">-->
+<!--                                    <strong t-esc="sum(docs.mapped('depreciation_value'))"-->
+<!--                                            t-options='{"widget": "monetary"}'/>-->
+<!--                                </td>-->
+<!--                                <td class="text-right">-->
+<!--                                    <strong t-esc="sum(docs.mapped('value_residual'))"-->
+<!--                                            t-options='{"widget": "monetary"}'/>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                        </tfoot>-->
+<!--                    </table>-->
+<!--                </div>-->
+<!--            </t>-->
+<!--        </t>-->
+<!--    </template>-->
+
+<!--    &lt;!&ndash; Depreciation Report Template &ndash;&gt;-->
+<!--    <template id="report_asset_depreciation">-->
+<!--        <t t-call="web.html_container">-->
+<!--            <t t-call="web.external_layout">-->
+<!--                <div class="page">-->
+<!--                    <h2>Rapport d'amortissement</h2>-->
+
+<!--                    &lt;!&ndash; Header Info &ndash;&gt;-->
+<!--                    <div class="row mb-4">-->
+<!--                        <div class="col-6">-->
+<!--                            <strong>Date d'édition:</strong> 2025-02-11 14:07:26-->
+<!--                        </div>-->
+<!--                        <div class="col-6 text-right">-->
+<!--                            <strong>Utilisateur:</strong> elsouleymane-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <t t-foreach="docs" t-as="asset">-->
+<!--                        <div class="asset-section mb-4">-->
+<!--                            <h4>-->
+<!--                                <span t-field="asset.name"/>-->
+<!--                                <small class="text-muted" t-field="asset.code"/>-->
+<!--                            </h4>-->
+
+<!--                            <div class="row">-->
+<!--                                <div class="col-4">-->
+<!--                                    <strong>Catégorie:</strong> <span t-field="asset.model_id"/>-->
+<!--                                </div>-->
+<!--                                <div class="col-4">-->
+<!--                                    <strong>Date d'acquisition:</strong> <span t-field="asset.acquisition_date"/>-->
+<!--                                </div>-->
+<!--                                <div class="col-4">-->
+<!--                                    <strong>Taux:</strong> <span t-field="asset.taux"/>%-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            <table class="table table-sm mt-3">-->
+<!--                                <thead>-->
+<!--                                    <tr>-->
+<!--                                        <th>Année</th>-->
+<!--                                        <th>Base</th>-->
+<!--                                        <th>Dotation</th>-->
+<!--                                        <th>Cumul</th>-->
+<!--                                        <th>VNC</th>-->
+<!--                                    </tr>-->
+<!--                                </thead>-->
+<!--                                <tbody>-->
+<!--                                    <t t-foreach="asset.depreciation_move_ids" t-as="move">-->
+<!--                                        <tr>-->
+<!--                                            <td><span t-field="move.date"/></td>-->
+<!--                                            <td><span t-field="move.asset_value" t-options='{"widget": "monetary"}'/></td>-->
+<!--                                            <td><span t-field="move.amount_total" t-options='{"widget": "monetary"}'/></td>-->
+<!--                                            <td><span t-field="move.depreciated_value" t-options='{"widget": "monetary"}'/></td>-->
+<!--                                            <td><span t-field="move.remaining_value" t-options='{"widget": "monetary"}'/></td>-->
+<!--                                        </tr>-->
+<!--                                    </t>-->
+<!--                                </tbody>-->
+<!--                            </table>-->
+<!--                        </div>-->
+<!--                    </t>-->
+<!--                </div>-->
+<!--            </t>-->
+<!--        </t>-->
+<!--    </template>-->
+</odoo>

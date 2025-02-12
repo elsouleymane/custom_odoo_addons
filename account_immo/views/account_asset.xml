@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="account_asset_tree_inherit">
+            <field name="name">account.asset.tree.inherit</field>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <header>
+                        <button name="calculate_total_asset" string="Liste des amortissements" type="object" class="btn-primary"/>
+                    </header>
+                </xpath>
+                <xpath expr="//tree/field[@name='name']"
+                       position="before">
+                    <field name="code" optional="show"/>
+                    <field name="taux" optional="show"/>
+                    <field name="method_number" optional="show"/>
+                    <field name="model_id" optional="show" string="Catégorie"/>
+                    <field name="affectation" optional="show"/>
+                </xpath>
+                <xpath expr="//tree/field[@name='value_residual']" position="after">
+                    <field name="amort_total" optional="show"/>
+                    <field name="cession_value" optional="show"/>
+                    <field name="plus_value" optional="show"/>
+                    <field name="moins_value" optional="show"/>
+                </xpath>
+                <xpath expr="//tree/field[@name='value_residual']" position="before">
+                    <field name="amort_total" optional="show"/>
+                </xpath>
+                <xpath expr="//tree/field[@name='account_depreciation_id']" position="attributes">
+                    <attribute name="string">Compte d'amortissement</attribute>
+                </xpath>
+                <xpath expr="//tree/field[@name='account_depreciation_expense_id']" position="attributes">
+                    <attribute name="string">Compte de dotation</attribute>
+                </xpath>
+                <xpath expr="//tree/field[@name='book_value']" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </xpath>
+                <xpath expr="//tree/field[@name='method']" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </xpath>
+                <xpath expr="//tree/field[@name='original_value']" position="attributes">
+                    <attribute name="string">Valeur d'aquisition</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="account_asset_form_inherit">
+            <field name="name">account.asset.form.inherit</field>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/field[@name='state']" position="replace">
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,cushioned"
+                           invisible="state == 'model'"/>
+                </xpath>
+                <xpath expr="//header/button[@name='compute_depreciation_board']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='action_save_model']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='validate']" position="after">
+                    <button name="action_asset_modify" invisible="state != 'cushioned'"
+                            string="Modifier l'amortissement" type="object" data-hotkey="e" class="oe_highlight"/>
+                    <button name="set_to_cancelled" string="Annuler l'immobilisation" type="object"
+                            invisible="state != 'cushioned'"/>
+                    <button name="amort_action" type="object" string="Tot.Amorti" class="btn-primary"
+                            invisible="value_residual != 0 or state !='open'"/>
+                </xpath>
+                <xpath expr="//sheet/group/group[2]/field[@name='account_depreciation_id']"
+                       position="replace">
+                    <field
+                            name="account_depreciation_id"
+                            domain="[('account_type', 'in', (
+                                    'asset_fixed',
+                                    'asset_non_current',
+                                    'asset_current'))]"
+                            context="{
+                                    'default_account_type': 'asset_non_current',
+                                    'hide_model_on_account': state == 'model' and not id,
+                                    'account_type_domain': [('account_type', 'in', (
+                                        'asset_fixed',
+                                        'asset_non_current'))]}"
+                            readonly="state == 'close'"
+                            string="Compte d'amortissement"
+                    />
+
+                </xpath>
+                <xpath expr="//sheet/notebook/page[@name='main_page']/group/group[4]/field[@name='account_depreciation_id']"
+                       position="replace">
+                    <field
+                            name="account_depreciation_id"
+                            domain="[('account_type', 'in', (
+                                    'asset_fixed',
+                                    'asset_non_current',
+                                    'asset_current'))]"
+                            context="{
+                                    'default_account_type': 'asset_non_current',
+                                    'hide_model_on_account': state == 'model' and not id,
+                                    'account_type_domain': [('account_type', 'in', (
+                                        'asset_fixed',
+                                        'asset_non_current'))]}"
+                            readonly="state == 'close'"
+                            string="Compte d'amortissement"
+                    />
+                </xpath>
+                <xpath expr="//sheet/notebook/page[@name='depreciation_board']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//sheet/group/group[2]/field[@name='account_depreciation_expense_id']"
+                       position="replace">
+                    <field
+                            name="account_depreciation_expense_id"
+                            domain="[('account_type', 'in', (
+                                    'expense_depreciation',
+                                    'expense'))]"
+                            context="{
+                                    'default_account_type': 'expense_depreciation',
+                                    'default_tax_ids': [],
+                                    'hide_model_on_account': state == 'model' and not id,
+                                    'account_type_domain': [('account_type', 'in', (
+                                        'expense_depreciation',
+                                        'expense'))]}"
+                            readonly="state == 'close'"
+                            string="Compte de dotation"
+                    />
+                </xpath>
+                <xpath expr="//sheet/notebook/page[@name='main_page']/group/group[4]/field[@name='account_depreciation_expense_id']"
+                       position="replace">
+                    <field
+                            name="account_depreciation_expense_id"
+                            domain="[('account_type', 'in', (
+                                    'expense_depreciation',
+                                    'expense'))]"
+                            context="{
+                                    'default_account_type': 'expense_depreciation',
+                                    'default_tax_ids': [],
+                                    'hide_model_on_account': state == 'model' and not id,
+                                    'account_type_domain': [('account_type', 'in', (
+                                        'expense_depreciation',
+                                        'expense'))]}"
+                            readonly="state == 'close'"
+                            string="Compte de dotation"
+                    />
+                </xpath>
+                <xpath expr="//sheet/notebook/page[@name='main_page']/group/group[1]/field[@name='original_value']"
+                       position="attributes">
+                    <attribute name="string">Valeur d'aquisition</attribute>
+                </xpath>
+                <xpath expr="//sheet/notebook/page[@name='main_page']/group/group[2]"
+                       position="replace">
+
+                    <group string="Valeurs actuelles" invisible="state == 'model'" name="current_values">
+                        <label for="salvage_value"/>
+                        <field name="salvage_value" nolabel="1" force_save="1" widget="monetary"
+                               invisible="state == 'model'" options="{'currency_field': 'currency_id'}"
+                               readonly="state !='draft'"/>
+                        <label for="value_residual"/>
+                        <field name="value_residual" string="Valeur résiduelle" nolabel="1" force_save="1"
+                               widget="monetary"
+                               invisible="state == 'model'" options="{'currency_field': 'currency_id'}"
+                               readonly="state !='draft'"/>
+                        <label for="amort_total" invisible="state == 'model' or original_value == salvage_value"/>
+                        <field name="amort_total" nolabel="1" force_save="1" widget="monetary"
+                               invisible="state == 'model' or original_value == salvage_value"
+                               options="{'currency_field': 'currency_id'}"/>
+
+                    </group>
+                </xpath>
+                <xpath expr="//div[@class='oe_title']" position="after">
+                    <group>
+                        <group>
+                            <field name="code" required="1"/>
+                            <field name="affectation" required="state != 'model'"/>
+                        </group>
+                        <group>
+                            <field name="marque" required="state != 'model'"/>
+                            <field name="ref"/>
+                            <field name="seriial_number"/>
+                            <field name="immat"/>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="//sheet/notebook/page[@name='main_page']/group/group[3]/field[@name='prorata_computation_type']"
+                       position="before">
+                    <field name="taux" readonly="state not in ['draft', 'model']"/>
+                </xpath>
+                <xpath expr="//sheet/notebook/page[@name='main_page']/group/group[5]"
+                       position="after">
+                    <group string="CESSION">
+                        <field name="cession_value"/>
+                        <field name="cession_date"/>
+                        <field name="overtdate"/>
+                        <field name="plus_value" readonly="1"/>
+                        <field name="moins_value" readonly="1"/>
+                    </group>
+                    <group string="INFOS FOURNISSEUR">
+                        <field name="partner_char"/>
+                        <field name="invoice_number"/>
+                        <field name="invoice_date"/>
+                    </group>
+                </xpath>
+                <xpath expr="//sheet/notebook/page[@name='depreciation_board']/field[@name='depreciation_move_ids']/tree/field[@name='asset_depreciated_value']"
+                       position="attributes">
+                    <attribute name="string">Amortissement cumulé</attribute>
+                </xpath>
+                <xpath expr="//sheet/notebook/page/group/group[4]/field[@name='journal_id']" position="after">
+                    <field name="disposal_journal_id" readonly="state not in ['draft', 'model']"/>
+                    <field name="invest" readonly="state not in ['draft', 'model']"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_asset_search_inherit">
+            <field name="name">account.asset.search.inherit</field>
+            <field name="model">account.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/field[@name='name']"
+                       position="before">
+                    <field name="code"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
