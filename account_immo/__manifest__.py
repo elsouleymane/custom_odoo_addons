@@ -22,7 +22,7 @@ Long description of module's purpose
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/menu.xml',
         'views/account_asset.xml',
         'wizard/asset_modify_views.xml',

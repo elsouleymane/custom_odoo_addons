@@ -8,8 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="inside">
                     <header>
-                        <button name="calculate_total_asset" string="Choisir Plage de cat. à imprimer" type="object"
-                                class="btn-primary"/>
+                        <button name="%(action_report_asset_depreciation_popup)d" string="Choisir Plage de cat. à imprimer" type="action" class="btn-primary"/>
                     </header>
                 </xpath>
                 <xpath expr="//tree/field[@name='name']"
@@ -56,6 +55,38 @@
             <field name="report_file">account_immo.report_asset_depreciation</field>
             <field name="binding_model_id" ref="model_account_asset"/>
             <field name="binding_type">report</field>
+        </record>
+
+        <!-- action popup du rapport -->
+
+        <record id="view_report_asset_depreciation_form" model="ir.ui.view">
+            <field name="name">view.report.asset.depreciation.form</field>
+            <field name="model">account.asset.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Liste des amortissements par plage de cat.">
+                    <sheet>
+                    <group colspan="2" col="2">
+                        <group>
+                            <field name="category_start_id"/>
+                        </group>
+                        <group>
+                            <field name="category_end_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                    <footer>
+                        <button string="Print" name="print_report" type="object"  class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_report_asset_depreciation_popup">
+            <field name="name">Liste des amortissements par plage de cat.</field>
+            <field name="res_model">account.asset.report.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_report_asset_depreciation_form"/>
+            <field name="target">new</field>
         </record>
 
         <!-- template -->
