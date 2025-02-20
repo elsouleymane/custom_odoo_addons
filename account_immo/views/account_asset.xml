@@ -8,7 +8,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="inside">
                     <header>
-                        <button name="%(action_report_asset_depreciation_popup)d" string="Choisir Plage de cat. à imprimer" type="action" class="btn-primary"/>
+                        <button name="%(action_report_asset_depreciation_popup)d"
+                                string="Choisir Plage de cat. à imprimer" type="action" class="btn-primary"/>
                     </header>
                 </xpath>
                 <xpath expr="//tree/field[@name='name']"
@@ -45,42 +46,42 @@
                 </xpath>
             </field>
         </record>
-
-        <!-- action du rapport -->
+        <!-- Report -->
         <record id="action_report_asset_depreciation" model="ir.actions.report">
             <field name="name">Liste des amortissements</field>
             <field name="model">account.asset</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">account_immo.report_asset_depreciation</field>
+            <field name="report_name">account_immo.report_asset_range</field>
             <field name="report_file">account_immo.report_asset_depreciation</field>
             <field name="binding_model_id" ref="model_account_asset"/>
             <field name="binding_type">report</field>
         </record>
 
-        <!-- action popup du rapport -->
-
+        <!-- Wizard form view -->
         <record id="view_report_asset_depreciation_form" model="ir.ui.view">
             <field name="name">view.report.asset.depreciation.form</field>
             <field name="model">account.asset.report.wizard</field>
             <field name="arch" type="xml">
                 <form string="Liste des amortissements par plage de cat.">
                     <sheet>
-                    <group colspan="2" col="2">
-                        <group>
-                            <field name="category_start_id"/>
+                        <group colspan="2" col="2">
+                            <group>
+                                <field name="category_start_id"/>
+                            </group>
+                            <group>
+                                <field name="category_end_id"/>
+                            </group>
                         </group>
-                        <group>
-                            <field name="category_end_id"/>
-                        </group>
-                    </group>
-                </sheet>
+                    </sheet>
                     <footer>
-                        <button string="Print" name="print_report" type="object"  class="btn-primary"/>
+                        <button string="Print" name="action_print_range" type="object" class="btn-primary" close="1"/>
                         <button string="Cancel" class="btn-secondary" special="cancel"/>
                     </footer>
                 </form>
             </field>
         </record>
+
+        <!-- Action wizard -->
         <record model="ir.actions.act_window" id="action_report_asset_depreciation_popup">
             <field name="name">Liste des amortissements par plage de cat.</field>
             <field name="res_model">account.asset.report.wizard</field>
@@ -90,6 +91,7 @@
         </record>
 
         <!-- template -->
+
         <template id="report_asset_depreciation">
             <t t-call="web.html_container">
                 <t t-call="web.basic_layout">
@@ -111,11 +113,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <t t-foreach="grouped_docs.items()" t-as="group">
+                                <t t-foreach="grouped_docs" t-as="category">
                                     <tr class="table-active">
-                                        <td colspan="10"><strong><t t-esc="group[0]"/></strong></td>
+                                        <td colspan="10">
+                                            <strong t-esc="category"/>
+                                        </td>
                                     </tr>
-                                    <t t-foreach="group[1]" t-as="asset">
+                                    <t t-foreach="grouped_docs[category]" t-as="asset">
                                         <tr>
                                             <td><span t-field="asset.code"/></td>
                                             <td><span t-field="asset.name"/></td>
@@ -126,13 +130,13 @@
                                             <td><span t-field="asset.ref"/></td>
                                             <td><span t-field="asset.invoice_date"/></td>
                                             <td><span t-field="asset.acquisition_date"/></td>
-                                            <td><span t-field="asset.original_value"
-                                                      t-options='{"widget": "monetary"}'/></td>
+                                            <td><span t-field="asset.original_value"/></td>
                                         </tr>
                                     </t>
                                     <tr class="table-active">
                                         <td colspan="9"><strong>Sous-total</strong></td>
-                                        <td><strong t-esc="category_totals[group[0]]"/></td>
+                                        <td><strong t-esc="category_totals[category]"
+                                                    /></td>
                                     </tr>
                                 </t>
                             </tbody>

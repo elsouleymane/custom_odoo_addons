@@ -307,7 +307,8 @@ class AccountAssetInherit(models.Model):
                     asset.write(
                         {'book_value': 0, 'value_residual': 0})
 
-    def _insert_depreciation_line(self, amount, beginning_depreciation_date, depreciation_date, days_depreciated, loss_account_id):
+    def _insert_depreciation_line(self, amount, beginning_depreciation_date, depreciation_date, days_depreciated,
+                                  loss_account_id):
         """ Inserts a new line in the depreciation board, shifting the sequence of
         all the following lines from one unit.
         :param amount:          The depreciation amount of the new line.
@@ -571,9 +572,6 @@ class AccountAssetInherit(models.Model):
                 except:
                     rec.write({'state': 'open'})
 
-    def open_categorie_range(self):
-        print('Hello')
-
 
 class ReportAssetDepreciation(models.AbstractModel):
     _name = 'report.account_immo.report_asset_depreciation'
@@ -582,20 +580,25 @@ class ReportAssetDepreciation(models.AbstractModel):
     @api.model
     def _get_report_values(self, docids, data=None):
         docs = self.env['account.asset'].browse(docids)
+
+        # Group assets by category
         grouped_docs = {}
         category_totals = {}
+
         for asset in docs:
-            category = asset.model_id.name if asset.model_id else 'Sans Catégorie'
+            category = asset.model_id.name or 'Non classé'
             if category not in grouped_docs:
                 grouped_docs[category] = []
-                category_totals[category] = 0
+                category_totals[category] = 0.0
             grouped_docs[category].append(asset)
             category_totals[category] += asset.original_value
+
         return {
             'doc_ids': docids,
             'doc_model': 'account.asset',
-            'grouped_docs': grouped_docs,
-            'category_totals': category_totals,
+            'docs': docs,
+            'grouped_docs': grouped_docs,  # dict avec category comme key et liste de assets comme value
+            'category_totals': category_totals,  # dict avec category comme key et total amount comme value
         }
 
 
@@ -606,5 +609,11 @@ class AccountAssetReportWizard(models.TransientModel):
     category_start_id = fields.Char(string='Début')
     category_end_id = fields.Char(string='Fin')
 
-    def print_report(self):
-        print(self.category_start_id, self.category_end_id)
+    def action_print_range(self):
+        self.ensure_one()
+        assets = self.env['account.asset'].search([
+            ('code', '>=', self.category_start_id),
+            ('code', '<=', self.category_end_id)
+        ])
+
+        return self.env.ref('account_immo.action_report_asset_depreciation').report_action(assets)
