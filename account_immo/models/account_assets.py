@@ -104,7 +104,7 @@ class AccountAssetInherit(models.Model):
 
     #################################################################################################################################################################################
     def calculate_total_asset(self):
-        return self.env.ref('account_immo.action_report_asset_depreciation').report_action(self)
+        return self.env.ref('account_immo.action_report_asset_depreciation').with_context(landscape=True).report_action(self)
 
     @api.constrains('code')
     def _check_code_unique(self):
@@ -580,13 +580,14 @@ class ReportAssetDepreciation(models.AbstractModel):
     @api.model
     def _get_report_values(self, docids, data=None):
         docs = self.env['account.asset'].browse(docids)
-
         # Group assets by category
         grouped_docs = {}
         category_totals = {}
 
         for asset in docs:
-            category = asset.model_id.name or 'Non classé'
+            category = 'Non classé'
+            if asset.account_asset_id:
+                category = asset.account_asset_id.name
             if category not in grouped_docs:
                 grouped_docs[category] = []
                 category_totals[category] = 0.0
@@ -610,10 +611,9 @@ class AccountAssetReportWizard(models.TransientModel):
     category_end_id = fields.Char(string='Fin')
 
     def action_print_range(self):
-        self.ensure_one()
         assets = self.env['account.asset'].search([
             ('code', '>=', self.category_start_id),
             ('code', '<=', self.category_end_id)
         ])
 
-        return self.env.ref('account_immo.action_report_asset_depreciation').report_action(assets)
+        return self.env.ref('account_immo.action_report_asset_depreciation').with_context(landscape=True).report_action(assets)

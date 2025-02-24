@@ -8,6 +8,5 @@
                   action="account_asset.action_account_asset_form" sequence="101"
                   groups="account.group_account_readonly"
                   name="Immobilisations"/>
-
     </data>
 </odoo>

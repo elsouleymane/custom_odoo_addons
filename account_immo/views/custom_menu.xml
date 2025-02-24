@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <menuitem id="menu_my_custom_button"
+                  name="My Button"
+                  sequence="30"
+                  parent="account.menu_finance"
+                  action="account_immo.action_report_asset_depreciation_popup"
+        />
+        <record id="account_immo.menu_my_custom_button" model="ir.ui.menu">
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

@@ -51,7 +51,7 @@
             <field name="name">Liste des amortissements</field>
             <field name="model">account.asset</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">account_immo.report_asset_range</field>
+            <field name="report_name">account_immo.report_asset_depreciation</field>
             <field name="report_file">account_immo.report_asset_depreciation</field>
             <field name="binding_model_id" ref="model_account_asset"/>
             <field name="binding_type">report</field>
@@ -82,7 +82,7 @@
         </record>
 
         <!-- Action wizard -->
-        <record model="ir.actions.act_window" id="action_report_asset_depreciation_popup">
+        <record id="action_report_asset_depreciation_popup" model="ir.actions.act_window">
             <field name="name">Liste des amortissements par plage de cat.</field>
             <field name="res_model">account.asset.report.wizard</field>
             <field name="view_mode">form</field>
@@ -95,8 +95,9 @@
         <template id="report_asset_depreciation">
             <t t-call="web.html_container">
                 <t t-call="web.basic_layout">
+                    <t t-set="title">Liste des immobilisations</t>
                     <div class="page">
-                        <h2 class="text-center">Listes des immobilisations</h2>
+                        <h2 class="text-center">Liste des immobilisations</h2>
                         <table class="table table-sm">
                             <thead>
                                 <tr>
@@ -135,8 +136,7 @@
                                     </t>
                                     <tr class="table-active">
                                         <td colspan="9"><strong>Sous-total</strong></td>
-                                        <td><strong t-esc="category_totals[category]"
-                                                    /></td>
+                                        <td><strong t-esc="category_totals[category]"/></td>
                                     </tr>
                                 </t>
                             </tbody>
@@ -145,6 +145,7 @@
                 </t>
             </t>
         </template>
+
         <record model="ir.ui.view" id="account_asset_form_inherit">
             <field name="name">account.asset.form.inherit</field>
             <field name="model">account.asset</field>
