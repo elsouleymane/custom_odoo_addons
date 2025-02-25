@@ -115,11 +115,6 @@
                             </thead>
                             <tbody>
                                 <t t-foreach="grouped_docs" t-as="category">
-                                    <tr class="table-active">
-                                        <td colspan="10">
-                                            <strong t-esc="category"/>
-                                        </td>
-                                    </tr>
                                     <t t-foreach="grouped_docs[category]" t-as="asset">
                                         <tr>
                                             <td><span t-field="asset.code"/></td>
@@ -135,7 +130,7 @@
                                         </tr>
                                     </t>
                                     <tr class="table-active">
-                                        <td colspan="9"><strong>Sous-total</strong></td>
+                                        <td colspan="9"><strong t-esc="category"/></td>
                                         <td><strong t-esc="category_totals[category]"/></td>
                                     </tr>
                                 </t>

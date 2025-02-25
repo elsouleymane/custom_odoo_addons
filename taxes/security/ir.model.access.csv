@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_local_addons/taxes_local_addons/taxes,local_addons/taxes.local_addons/taxes,model_local_addons/taxes_local_addons/taxes,base.group_user,1,1,1,1

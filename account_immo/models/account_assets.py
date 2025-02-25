@@ -1,14 +1,8 @@
-from datetime import datetime
-from unicodedata import category
-
-from reportlab.platypus import SimpleDocTemplate
-
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 from math import copysign
 from dateutil.relativedelta import relativedelta
 from odoo.tools import float_compare, float_is_zero, formatLang, end_of
-import psycopg2
 
 DAYS_PER_MONTH = 30
 DAYS_PER_YEAR = DAYS_PER_MONTH * 12

@@ -82,12 +82,11 @@
           <filter string="No Authors" name="without_author" domain="[('author_ids', '=', False)]"/>
         </search>
       </field>
-    </record>base.group_user
+    </record>
     <!-- menu categories -->
-<!--
-    <menuitem name="Menu 1" id="my_library.menu_1" parent="my_library.menu_root"/>
-    <menuitem name="Menu 2" id="my_library.menu_2" parent="my_library.menu_root"/>
--->
+
+    <menuitem name="Menu 1" id="my_library.menu_1" parent="base.menu_apps"/>
+
     <!-- actions -->
 <!--
     <menuitem name="List" id="my_library.menu_1_list" parent="my_library.menu_1"
