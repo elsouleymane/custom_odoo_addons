@@ -7,11 +7,11 @@
         <field name="arch" type="xml">
             <xpath expr="//header"
                    position="inside">
-                <button name="apply_aisi" string="Appliquer AISI" type="object" class="btn-primary"/>
+                <button name="apply_airsi" string="Appliquer AIRSI" type="object" class="btn-primary" invisible="move_type not in ('out_refund', 'out_refund')"/>
             </xpath>
             <xpath expr="//field[@name='tax_cash_basis_origin_move_id']"
                    position="after">
-                <field name="is_aisi" string="AISI" class="oe_inline"/>
+                <field name="is_airsi" string="AIRSI" widget="boolean_toggle" invisible="move_type not in ('out_refund', 'out_refund')"/>
             </xpath>
         </field>
     </record>

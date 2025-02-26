@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="account_tax_form_inherit">
+            <field name="name">account.tax.form.inherit</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='advanced_options']/group/group[1]" position="inside">
+                    <field name="is_airsi" string="AIRSI" widget="boolean_toggle" invisible="move_type not in ('out_refund', 'out_refund')"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

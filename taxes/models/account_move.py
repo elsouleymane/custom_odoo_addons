@@ -1,49 +1,66 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    is_aisi = fields.Boolean(string='AISI', default=False)
+    is_airsi = fields.Boolean(string='AIRSI', default=False)
 
-    def apply_aisi(self):
-        # Recherche des taxes qui contiennent 'AISI' dans leur nom
-        aisi_taxes = self.env['account.tax'].search([('name', 'ilike', 'AISI')])
+    def apply_airsi(self):
+        if self.move_type not in ['out_refund', 'in_refund']:
+            raise UserError('La fonction AIRSI ne peut être appliquée que sur les avoirs.')
 
-        if not aisi_taxes:
-            raise UserError('Aucune taxe contenant "AISI" dans son nom n\'a été trouvée.')
+        airsi_taxes = self.env['account.tax'].search([('is_airsi', '=', True)])
 
-        # Utiliser sudo().exists() pour être sûr d'avoir des enregistrements valides
-        # et filtrer les lignes qui ont product_id et tax_ids pour éviter les lignes vides
+        if not airsi_taxes:
+            raise UserError('Aucune taxe avec le champ is_airsi n\'a été trouvée.')
+
         valid_lines = self.sudo().line_ids.exists().filtered(
             lambda l: l.product_id and l.display_type not in ('line_section', 'line_note'))
 
-        if self.is_aisi:
-            # Traiter uniquement les lignes qui ont déjà des taxes
-            tax_lines = valid_lines.filtered(lambda l: l.tax_ids)
-            for line in tax_lines:
-                try:
-                    current_taxes = line.tax_ids
-                    new_taxes = current_taxes | aisi_taxes
-                    line.with_context(check_move_validity=False).tax_ids = new_taxes
-                except Exception as e:
-                    # Log l'erreur mais continue avec les autres lignes
-                    print(f"Erreur lors de l'ajout de la taxe AISI à la ligne {line.id}: {str(e)}")
-        else:
-            # Compter combien de lignes contiennent des taxes AISI
-            aisi_count = 0
+        if not valid_lines:
+            return {'warning': {'title': 'Information',
+                                'message': 'Aucune ligne valide trouvée pour appliquer les taxes AIRSI.'}}
+
+        modified_count = 0
+
+        if self.is_airsi:
             for line in valid_lines:
                 try:
-                    if line.tax_ids and any(tax.id in aisi_taxes.ids for tax in line.tax_ids):
-                        aisi_count += 1
-                        # Filtrer pour enlever les taxes AISI
-                        filtered_taxes = line.tax_ids.filtered(lambda tax: tax.id not in aisi_taxes.ids)
-                        line.with_context(check_move_validity=False).tax_ids = filtered_taxes
+                    product = line.product_id
+                    product_airsi_taxes = product.taxes_id.filtered(lambda t: t.is_airsi)
+
+                    if product_airsi_taxes:
+                        current_taxes = line.tax_ids
+                        missing_airsi_taxes = product_airsi_taxes - current_taxes
+
+                        if missing_airsi_taxes:
+                            new_taxes = current_taxes | missing_airsi_taxes
+                            line.with_context(check_move_validity=False).tax_ids = new_taxes
+                            modified_count += 1
                 except Exception as e:
-                    # Log l'erreur mais continue avec les autres lignes
-                    print(f"Erreur lors du retrait de la taxe AISI de la ligne {line.id}: {str(e)}")
+                    _logger.error(f"Erreur lors de l'ajout de la taxe AIRSI à la ligne {line.id}: {str(e)}")
+        else:
+            for line in valid_lines:
+                try:
+                    if line.tax_ids and any(tax.id in airsi_taxes.ids for tax in line.tax_ids):
+                        filtered_taxes = line.tax_ids.filtered(lambda tax: tax.id not in airsi_taxes.ids)
+                        line.with_context(check_move_validity=False).tax_ids = filtered_taxes
+                        modified_count += 1
+                except Exception as e:
+                    _logger.error(f"Erreur lors du retrait de la taxe AIRSI de la ligne {line.id}: {str(e)}")
 
-            if aisi_count == 0:
-                print('Aucune ligne ne contient de taxe AISI, rien à enlever.')
-
+        # Refresh the form view
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_type': 'form',
+            'views': [(False, 'form')],
+            'target': 'current'
+        }
