@@ -2,13 +2,13 @@
 {
     'name': "Taxes AIRSI",
 
-    'summary': "Short (1 phrase/line) summary of the module's purpose",
+    'summary': "Apply AIRSI taxes on refunds",
 
     'description': """
 Long description of module's purpose
     """,
 
-    'author': "My Company",
+    'author': "Nuhu Souleymane",
     'website': "https://www.yourcompany.com",
 
     # Categories can be used to filter modules in modules listing
