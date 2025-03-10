@@ -6,12 +6,10 @@
               web_icon="models_logger,static/description/icon.png"
               sequence="100"/>
     <menuitem id="menu_models_structure"
-              name="Models Log"
-              action="action_models_structure"
+              name="Log configuration"
               parent="menu_models_logger_root"
               sequence="10"
     />
-
 
 
 </odoo>

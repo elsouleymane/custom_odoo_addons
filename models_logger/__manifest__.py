@@ -13,10 +13,9 @@
     'version': '1.0',
     'depends': ['base'],
     'data': [
-        #'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/models_logger_views.xml',
         'views/models_logger_menus.xml',
-        'views/templates.xml',
     ],
     'application': True,
     'installable': True,

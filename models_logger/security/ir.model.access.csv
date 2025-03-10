@@ -1,4 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_models_logger_rule,access_models_logger_rule,model_models_logger_rule,base.group_user,1,1,1,1
-access_models_logger_log,access_models_logger_log,model_models_logger_log,base.group_user,1,1,1,1
-access_track_model_wizard,access_track_model_wizard,model_track_model_wizard,base.group_user,1,1,1,1
+access_models_logger_log_wizard,models_logger.log.wizard,model_models_logger_log_wizard,base.group_user,1,1,1,1
+access_models_logger_log_wizard_line,models_logger.log.wizard.line,model_models_logger_log_wizard_line,base.group_user,1,1,1,1

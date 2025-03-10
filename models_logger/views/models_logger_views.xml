@@ -1,12 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Form View -->
+    <record id="view_models_logger_wizard_form" model="ir.ui.view">
+        <field name="name">models_logger.log.wizard.form</field>
+        <field name="model">models_logger.log.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Track Models Changes">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="database"/>
+                            <field name="user_id"/>
+                            <field name="password" password="True"/>
+                        </group>
+                        <group>
+                            <field name="model_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <notebook invisible="result_ids == []">
+                        <page string="Historique">
+                            <field name="result_ids">
+                                <tree>
+                                    <field name="model_name"/>
+                                    <field name="model_description"/>
+                                    <field name="user_name"/>
+                                    <field name="database"/>
+                                    <field name="create_date" optional="hide"/>
+                                    <field name="write_date"/>
+                                    <field name="notes" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Tracker" name="verify_and_track" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
-    <!-- Actions -->
+    <!-- Action -->
+    <record id="action_models_logger_wizard" model="ir.actions.act_window">
+        <field name="name">Track Model Changes</field>
+        <field name="res_model">models_logger.log.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_models_logger_wizard_form"/>
+        <field name="target">new</field>
+    </record>
     <record id="action_models_structure" model="ir.actions.act_window">
-        <field name="name">Models Structure</field>
+        <field name="name">Models Log</field>
         <field name="res_model">ir.model</field>
         <field name="view_mode">tree,form</field>
     </record>
+    <!-- Inherit Model Tree View -->
+    <record id="view_model_tree_logger" model="ir.ui.view">
+        <field name="name">ir.model.tree.inherit.models.logger</field>
+        <field name="model">ir.model</field>
+        <field name="inherit_id" ref="base.view_model_tree"/>
+        <field name="arch" type="xml">
+            <tree position="inside">
+                <header>
+                    <button name="%(action_models_logger_wizard)d"
+                            type="action"
+                            string="Track Changes"
+                            icon="fa-history" class="btn-primary"/>
+                </header>
+            </tree>
+        </field>
+    </record>
+
 
 
 </odoo>
