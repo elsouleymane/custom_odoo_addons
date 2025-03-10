@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Actions -->
+    <record id="action_models_structure" model="ir.actions.act_window">
+        <field name="name">Models Structure</field>
+        <field name="res_model">ir.model</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+</odoo>
