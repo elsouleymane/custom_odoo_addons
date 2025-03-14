@@ -1,9 +1,7 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
-import { session } from "@web/session";
-import { _t } from "@web/core/l10n/translation";
 import { Component } from "@odoo/owl";
-import { onWillStart, onMounted, useState, useRef } from "@odoo/owl";
+import { onWillStart, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
 const actionRegistry = registry.category("actions");

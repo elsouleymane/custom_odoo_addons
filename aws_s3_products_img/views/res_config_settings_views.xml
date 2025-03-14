@@ -1,63 +1,47 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!--    Configure access keys    -->
     <record id="res_config_settings_view_form" model="ir.ui.view">
-        <field name="name">
-            res.config.settings.view.form.inherit.amazon.s3.connector
-        </field>
+        <field name="name">res.config.settings.view.form.inherit.amazon.s3</field>
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//block[@name='integration']" position="inside">
-                <div class="col-12 col-lg-6 o_setting_box" id="amazon">
-                    <div class="o_setting_left_pane">
-                        <field name="is_amazon_connector"
-                               string="Amazon S3 Cloud Storage"/>
-                    </div>
-                    <div class="o_setting_right_pane">
-                        <label for="is_amazon_connector"/>
-                        <div class="text-muted">
-                            Synchronize with Amazon S3 Cloud Storage
+                <block title="Amazon S3" name="aws_s3_block" id="aws_s3_section">
+                    <setting id="amazon_s3_setting" help="Store product images and attachments in Amazon S3">
+                        <field name="use_s3_cdn"/>
+                        <label for="use_s3_cdn" string="Use Amazon S3 for Product Images"/>
+                        <div class="mt-2">
+                            <field name="use_s3_attachments"/>
+                            <label for="use_s3_attachments" string="Use S3 for Product Attachments"/>
                         </div>
-                    </div>
-                    <div class="o_setting_right_pane">
-                        <span invisible="(is_amazon_connector == False)">
-                            Access key:
-                            <field name="amazon_access_key"
-                                   invisible="(is_amazon_connector == False)"/>
-                        </span>
-                    </div>
-                    <div class="o_setting_right_pane">
-                        <span invisible="(is_amazon_connector == False)">
-                            Secret access key:
-                            <field name="amazon_secret_key" password="True"
-                                   invisible="(is_amazon_connector == False)"/>
-                        </span>
-                    </div>
-                    <div class="o_setting_right_pane">
-                        <span invisible="(is_amazon_connector == False)">
-                            Bucket Name:
-                            <field name="amazon_bucket_name"
-                                   invisible="(is_amazon_connector == False)"/>
-                        </span>
-                    </div>
-                </div>
-            </xpath>
-            <xpath expr="//block[@name='products']" position="inside">
-                <h2>AWS S3 Image Storage</h2>
-                <div class="row mt16 o_settings_container">
-                    <div class="col-12 col-lg-6 o_setting_box">
-                        <div class="o_setting_left_pane">
-                            <field name="use_s3_cdn"/>
-                        </div>
-                        <div class="o_setting_right_pane">
-                            <label for="use_s3_cdn"/>
-                            <div class="text-muted">
-                                Upload all product images to AWS S3 CDN
+                    </setting>
+
+                    <div invisible="not use_s3_cdn and not use_s3_attachments">
+                        <h3 class="mt-4 mb-3">Amazon S3 Credentials</h3>
+                        <div class="row">
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <label for="amazon_access_key" string="Access Key"/>
+                                <field name="amazon_access_key" class="w-100"/>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <label for="amazon_secret_key" string="Secret Key"/>
+                                <field name="amazon_secret_key" password="True" class="w-100"/>
                             </div>
                         </div>
+                        <div class="row mt-2">
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <label for="amazon_bucket_name" string="Bucket Name"/>
+                                <field name="amazon_bucket_name" class="w-100"/>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <label for="amazon_region" string="Amazon region"/>
+                                <field name="amazon_region" class="w-100"/>
+                            </div>
+                            <button string="Configure S3 CORS" type="object" name="action_setup_s3_cors"
+                                    class="btn-primary" invisible="not use_s3_cdn"/>
+                        </div>
                     </div>
-                </div>
+                </block>
             </xpath>
         </field>
     </record>

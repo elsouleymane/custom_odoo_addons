@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="aws_s3_products_img.S3ImagePreviewWidget" owl="1">
+        <div class="s3-image-preview-widget" t-ref="container">
+            <t t-if="props.value">
+                <div class="s3-thumbnail-container" t-on-click="openPreview">
+                    <img t-att-src="props.value" class="s3-image-thumbnail" alt="S3 Image" title="Click to preview"/>
+                </div>
+                <button class="btn btn-sm btn-secondary s3-preview-btn mt-2" t-on-click="openPreview">Preview</button>
+            </t>
+            <t t-else="">
+                <div>No image available</div>
+            </t>
+        </div>
+    </t>
+</templates>

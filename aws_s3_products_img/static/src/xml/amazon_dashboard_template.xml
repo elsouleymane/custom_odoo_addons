@@ -29,7 +29,7 @@
                     <thead class="table-dark">
                         <tr>
                             <th class="sort-number" style="text-align:center;"
-                                scope="col" t-on-click="sort_number">SL NO:
+                                scope="col" t-on-click="sort_number">NO:
                             </th>
                             <th class="sort-name" scope="col"
                                 t-on-click="sort_name">Name</th>

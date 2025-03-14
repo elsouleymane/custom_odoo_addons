@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_attachment_form_s3_preview" model="ir.ui.view">
+        <field name="name">ir.attachment.form.s3.preview</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="base.view_attachment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='url']" position="after">
+                <div class="mt-3" invisible="not url">
+                    <span class="fw-bold">S3 Preview:</span>
+                    <field name="url" widget="s3_image_preview"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
