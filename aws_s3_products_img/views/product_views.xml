@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="product_template_form_view_s3_cdn" model="ir.ui.view">
         <field name="name">product.template.form.s3cdn</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='image_1920']" position="after">
-                <field name="use_s3_cdn"/>
-                <field name="image_1920_url" readonly="1" widget="url" invisible="[('image_1920_url', '=', False)]"/>
+            <!-- Add the invisible field for technical use -->
+            <xpath expr="//sheet" position="inside">
+                <field name="use_s3_storage" invisible="1"/>
             </xpath>
         </field>
     </record>

@@ -4,7 +4,6 @@ from odoo import models, api, fields
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    # Changed to computed field based on global setting
     use_s3_cdn = fields.Boolean('Use Aws S3 CDN', compute='_compute_use_s3_cdn')
     image_1920_url = fields.Char('Image URL', compute='_compute_s3_image_url')
 
