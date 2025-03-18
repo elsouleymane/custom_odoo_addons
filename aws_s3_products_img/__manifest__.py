@@ -14,6 +14,7 @@
         'views/res_config_settings_views.xml',
         'views/product_views.xml',
         'views/attachment_views.xml',
+        'views/s3_model_selection_wizard_views.xml',
         'wizard/amazon_upload_file_views.xml'
     ],
     'assets': {

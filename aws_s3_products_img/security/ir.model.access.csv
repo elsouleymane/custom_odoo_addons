@@ -1,4 +1,7 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 access_amazon_dashboard_group_user,access.amazon.dashboard.group.user,model_amazon_dashboard,base.group_user,1,1,1,1
 access_amazon_upload_file_group_user,access.amazon.upload.file.group.user,model_amazon_upload_file,base.group_user,1,1,1,1
-access_amazon_product_image,access.amazon.product.image,model_amazon_product_image,base.group_user,1,1,1,1
+access_amazon_image_storage_user,amazon.image.storage.user,model_amazon_image_storage,base.group_user,1,0,0,0
+access_amazon_image_storage_manager,amazon.image.storage.manager,model_amazon_image_storage,base.group_system,1,1,1,1
+access_s3_model_selection_wizard,s3.model.selection.wizard,model_s3_model_selection_wizard,base.group_system,1,1,1,1
+access_s3_model_selection_wizard,s3.model.selection.wizard,model_s3_model_selection_wizard,base.group_system,1,1,1,1

@@ -7,16 +7,12 @@
         <field name="arch" type="xml">
             <xpath expr="//block[@name='integration']" position="inside">
                 <block title="Amazon S3" name="aws_s3_block" id="aws_s3_section">
-                    <setting id="amazon_s3_setting" help="Store product images and attachments in Amazon S3">
+                    <setting id="amazon_s3_setting" help="Store files and attachments in Amazon S3">
                         <field name="use_s3_cdn"/>
-                        <label for="use_s3_cdn" string="Use Amazon S3 for Product Images"/>
-                        <div class="mt-2">
-                            <field name="use_s3_attachments"/>
-                            <label for="use_s3_attachments" string="Use S3 for Product Attachments"/>
-                        </div>
+                        <label for="use_s3_cdn" string="Use Amazon S3 for Storage"/>
                     </setting>
 
-                    <div invisible="not use_s3_cdn and not use_s3_attachments">
+                    <div invisible="not use_s3_cdn">
                         <h3 class="mt-4 mb-3">Amazon S3 Credentials</h3>
                         <div class="row">
                             <div class="col-12 col-lg-6 o_setting_box">
@@ -32,13 +28,25 @@
                             <div class="col-12 col-lg-6 o_setting_box">
                                 <label for="amazon_bucket_name" string="Bucket Name"/>
                                 <field name="amazon_bucket_name" class="w-100"/>
+                                <field name="s3_model_ids" invisible="1"/>
                             </div>
                             <div class="col-12 col-lg-6 o_setting_box">
                                 <label for="amazon_region" string="Amazon region"/>
                                 <field name="amazon_region" class="w-100"/>
                             </div>
-                            <button string="Configure S3 CORS" type="object" name="action_setup_s3_cors"
-                                    class="btn-primary" invisible="not use_s3_cdn"/>
+                            <div class="mt16">
+                                <label for="s3_model_names" string="Models" class="col-3 col-lg-3 o_light_label"/>
+                                <field name="s3_model_names" readonly="1"/>
+                                <field name="s3_model_ids" invisible="1"/>
+                                <button name="action_select_s3_models" type="object" string="Select Models"
+                                        class="btn-sm btn-link mb4 fa fa-gear"/>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button string="Configure S3 CORS" type="object" name="action_setup_s3_cors"
+                                        class="btn-primary"/>
+                            </div>
                         </div>
                     </div>
                 </block>
