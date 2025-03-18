@@ -22,7 +22,6 @@ class AmazonProductImage(models.Model):
             return False
 
         try:
-            import boto3
             s3_client = boto3.client(
                 's3',
                 region_name=region,
@@ -53,69 +52,79 @@ class AmazonProductImage(models.Model):
             return False
 
     def upload_attachment_to_s3(self, attachment):
-                """Upload an attachment to S3 and update its URL"""
-                if not attachment.datas:
-                    return False
+        """Upload an attachment to S3 and update its URL"""
+        _logger.info(f"Starting upload_attachment_to_s3 for attachment {attachment.id}")
 
-                access_key = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_access_key')
-                access_secret = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_secret_key')
-                bucket_name = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_bucket_name')
-                region = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_region')
+        if not attachment.datas:
+            _logger.warning(f"Attachment {attachment.id} has no data.")
+            return False
 
-                if not all([access_key, access_secret, bucket_name]):
-                    _logger.error("S3 configuration incomplete. Check settings.")
-                    return False
+        access_key = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_access_key')
+        access_secret = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_secret_key')
+        bucket_name = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_bucket_name')
+        region = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_region')
 
-                try:
-                    s3_client = boto3.client(
-                        's3',
-                        region_name=region,
-                        aws_access_key_id=access_key,
-                        aws_secret_access_key=access_secret,
-                        config=boto3.session.Config(signature_version='s3v4')
-                    )
+        if not all([access_key, access_secret, bucket_name]):
+            _logger.error("S3 configuration incomplete. Check settings.")
+            _logger.error(f"Access Key: {access_key}, Secret Key: {access_secret}, Bucket Name: {bucket_name}")
+            return False
 
-                    # Get product info if available
-                    product_name = 'unnamed'
-                    res_id = attachment.res_id or 0
+        try:
+            s3_client = boto3.client(
+                's3',
+                region_name=region,
+                aws_access_key_id=access_key,
+                aws_secret_access_key=access_secret,
+                config=boto3.session.Config(signature_version='s3v4')
+            )
 
-                    if attachment.res_model in ['product.template', 'product.product'] and attachment.res_id:
-                        product = self.env[attachment.res_model].browse(attachment.res_id)
-                        if product.exists() and product.name:
-                            product_name = product.name.lower().replace(' ', '-')
-                            product_name = ''.join(c for c in product_name if c.isalnum() or c == '-')[:50]
+            # Get product info if available
+            product_name = 'unnamed'
+            res_id = attachment.res_id or 0
 
-                    # File name processing
-                    file_name = attachment.name or 'unnamed'
-                    sanitized_file_name = ''.join(c for c in file_name if c.isalnum() or c in '-._')
+            if attachment.res_model in ['product.template', 'product.product'] and attachment.res_id:
+                product = self.env[attachment.res_model].browse(attachment.res_id)
+                if product.exists() and product.name:
+                    product_name = product.name.lower().replace(' ', '-')
+                    product_name = ''.join(c for c in product_name if c.isalnum() or c == '-')[:50]
 
-                    # S3 key with product info
-                    key = f"attachments/{product_name}_{res_id}/{attachment.id}_{sanitized_file_name}"
-                    binary_data = base64.b64decode(attachment.datas) if attachment.datas else b''
+            # File name processing
+            file_name = attachment.name or 'unnamed'
+            sanitized_file_name = ''.join(c for c in file_name if c.isalnum() or c in '-._')
 
-                    # Upload to S3 with public read access
-                    s3_client.put_object(
-                        Body=binary_data,
-                        Bucket=bucket_name,
-                        Key=key,
-                        ContentType=attachment.mimetype or 'application/octet-stream',
-                        ACL='public-read'
-                    )
+            # S3 key with product info
+            key = f"attachments/{product_name}_{res_id}/{attachment.id}_{sanitized_file_name}"
+            binary_data = base64.b64decode(attachment.datas) if attachment.datas else b''
 
-                    # Generate URL
-                    if region:
-                        url = f"https://{bucket_name}.s3.{region}.amazonaws.com/{key}"
-                    else:
-                        url = f"https://{bucket_name}.s3.amazonaws.com/{key}"
+            _logger.info(f"S3 Key: {key}")
+            _logger.info(f"Binary Data Size: {len(binary_data)}")
 
-                    # Update attachment URL
-                    attachment.with_context(skip_attachment_s3=True).write({
-                        'url': url,
-                        'datas': False,  # Remove binary data to save space
-                    })
+            # Upload to S3 with public read access
+            s3_client.put_object(
+                Body=binary_data,
+                Bucket=bucket_name,
+                Key=key,
+                ContentType=attachment.mimetype or 'application/octet-stream',
+                ACL='public-read'
+            )
 
-                    return url
+            # Generate URL
+            if region:
+                url = f"https://{bucket_name}.s3.{region}.amazonaws.com/{key}"
+            else:
+                url = f"https://{bucket_name}.s3.amazonaws.com/{key}"
 
-                except Exception as e:
-                    _logger.error(f"Error uploading to S3: {e}")
-                    return False
+            _logger.info(f"Generated S3 URL: {url}")
+
+            # Update attachment URL
+            attachment.with_context(skip_attachment_s3=True).write({
+                'url': url,
+                'datas': False,  # Remove binary data to save space
+            })
+
+            _logger.info(f"Successfully uploaded attachment {attachment.id} to S3")
+            return url
+
+        except Exception as e:
+            _logger.error(f"Error uploading to S3: {e}")
+            return False
