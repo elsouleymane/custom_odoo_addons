@@ -7,7 +7,7 @@ import {Component, useRef} from "@odoo/owl";
 import {useService} from "@web/core/utils/hooks";
 
 export class S3ImagePreviewWidget extends Component {
-    static template = "aws_s3_products_img.S3ImagePreviewWidget";
+    static template = "aws_s3_storage.S3ImagePreviewWidget";
     static props = {
         ...standardFieldProps,
     };

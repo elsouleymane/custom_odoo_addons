@@ -5,34 +5,34 @@ class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
     use_s3_cdn = fields.Boolean(
-        string='Use S3 for Attachments',
-        config_parameter='aws_s3_products_img.use_s3_cdn'
+        string='Utiliser S3 pour les Attachments',
+        config_parameter='aws_s3_storage.use_s3_cdn'
     )
 
     amazon_access_key = fields.Char(
         string='AWS Access Key',
-        config_parameter='aws_s3_products_img.amazon_access_key'
+        config_parameter='aws_s3_storage.amazon_access_key'
     )
 
     amazon_secret_key = fields.Char(
         string='AWS Secret Key',
-        config_parameter='aws_s3_products_img.amazon_secret_key'
+        config_parameter='aws_s3_storage.amazon_secret_key'
     )
 
     amazon_bucket_name = fields.Char(
         string='S3 Bucket Name',
-        config_parameter='aws_s3_products_img.amazon_bucket_name'
+        config_parameter='aws_s3_storage.amazon_bucket_name'
     )
 
     amazon_region = fields.Char(
         string='AWS Region',
         default='eu-north-1',
-        config_parameter='aws_s3_products_img.amazon_region'
+        config_parameter='aws_s3_storage.amazon_region'
     )
 
     s3_model_ids = fields.Char(
         string='Model IDs for S3 Storage',
-        config_parameter='aws_s3_products_img.s3_model_ids'
+        config_parameter='aws_s3_storage.s3_model_ids'
     )
 
     s3_model_names = fields.Char(

@@ -7,9 +7,8 @@
         <field name="arch" type="xml">
             <xpath expr="//block[@name='integration']" position="inside">
                 <block title="Amazon S3" name="aws_s3_block" id="aws_s3_section">
-                    <setting id="amazon_s3_setting" help="Store files and attachments in Amazon S3">
+                    <setting id="amazon_s3_setting" help="Stocker les fichiers and attachments sur Amazon S3">
                         <field name="use_s3_cdn"/>
-                        <label for="use_s3_cdn" string="Use Amazon S3 for Storage"/>
                     </setting>
 
                     <div invisible="not use_s3_cdn">

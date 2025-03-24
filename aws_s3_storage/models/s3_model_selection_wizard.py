@@ -6,8 +6,8 @@ class S3ModelSelectionWizard(models.TransientModel):
     _description = 'S3 Model Selection Wizard'
 
     config_id = fields.Integer(string='Config ID')
-    current_models = fields.Char(string='Current Models')
-    model_ids = fields.Many2many('ir.model', string='Models for S3 Storage')
+    current_models = fields.Char(string='Models actuellement sélectionnés')
+    model_ids = fields.Many2many('ir.model', string='Models à stocker sur S3 Storage')
 
     @api.model
     def default_get(self, fields_list):
@@ -21,7 +21,6 @@ class S3ModelSelectionWizard(models.TransientModel):
         self.ensure_one()
         model_ids = ','.join([str(model.id) for model in self.model_ids]) if self.model_ids else ''
 
-        # Update the system parameter directly
-        self.env['ir.config_parameter'].sudo().set_param('aws_s3_products_img.s3_model_ids', model_ids)
+        self.env['ir.config_parameter'].sudo().set_param('aws_s3_storage.s3_model_ids', model_ids)
 
         return {'type': 'ir.actions.act_window_close'}

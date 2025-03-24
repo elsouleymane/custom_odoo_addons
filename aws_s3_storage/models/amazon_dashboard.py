@@ -15,11 +15,11 @@ class AmazonDashboard(models.Model):
         Fetch all files from s3 and returns it.
         """
         access_key = self.env['ir.config_parameter'].get_param(
-            'aws_s3_products_img.amazon_access_key')
+            'aws_s3_storage.amazon_access_key')
         access_secret = self.env['ir.config_parameter'].get_param(
-            'aws_s3_products_img.amazon_secret_key')
+            'aws_s3_storage.amazon_secret_key')
         bucket_name = self.env['ir.config_parameter'].get_param(
-            'aws_s3_products_img.amazon_bucket_name')
+            'aws_s3_storage.amazon_bucket_name')
         if not access_key or not access_secret or not bucket_name:
             return False
         try:

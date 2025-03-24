@@ -11,7 +11,7 @@ class ProductProduct(models.Model):
     def _compute_use_s3_cdn(self):
         """Get global setting for S3 CDN usage"""
         use_s3_cdn = self.env['ir.config_parameter'].sudo().get_param(
-            'aws_s3_products_img.use_s3_cdn', 'False').lower() == 'true'
+            'aws_s3_storage.use_s3_cdn', 'False').lower() == 'true'
         for record in self:
             record.use_s3_cdn = use_s3_cdn
 
@@ -19,7 +19,7 @@ class ProductProduct(models.Model):
     def _compute_s3_image_url(self):
         # Get the global setting
         use_s3_cdn = self.env['ir.config_parameter'].sudo().get_param(
-            'aws_s3_products_img.use_s3_cdn', 'False').lower() == 'true'
+            'aws_s3_storage.use_s3_cdn', 'False').lower() == 'true'
 
         for record in self:
             record.image_1920_url = False
@@ -33,7 +33,7 @@ class ProductProduct(models.Model):
         res = super(ProductProduct, self).write(vals)
         # Get the global setting
         use_s3_cdn = self.env['ir.config_parameter'].sudo().get_param(
-            'aws_s3_products_img.use_s3_cdn', 'False').lower() == 'true'
+            'aws_s3_storage.use_s3_cdn', 'False').lower() == 'true'
 
         if use_s3_cdn and 'image_1920' in vals and vals.get('image_1920'):
             s3_handler = self.env['amazon.product.image']

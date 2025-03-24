@@ -24,10 +24,10 @@ def uninstall_hook(env):
     Deletes System Parameters
     """
     env['ir.config_parameter'].sudo().search(
-        [('key', '=', 'aws_s3_products_img.amazon_access_key')]).unlink()
+        [('key', '=', 'aws_s3_storage.amazon_access_key')]).unlink()
     env['ir.config_parameter'].sudo().search(
-        [('key', '=', 'aws_s3_products_img.amazon_secret_key')]).unlink()
+        [('key', '=', 'aws_s3_storage.amazon_secret_key')]).unlink()
     env['ir.config_parameter'].sudo().search(
-        [('key', '=', 'aws_s3_products_img.amazon_bucket_name')]).unlink()
+        [('key', '=', 'aws_s3_storage.amazon_bucket_name')]).unlink()
     env['ir.config_parameter'].sudo().search(
-        [('key', '=', 'aws_s3_products_img.amazon_connector')]).unlink()
+        [('key', '=', 'aws_s3_storage.amazon_connector')]).unlink()

@@ -12,8 +12,8 @@ class IrAttachment(models.Model):
     @api.depends('res_model')
     def _compute_use_s3_cdn(self):
         """Determine if S3 CDN should be used for this attachment"""
-        use_s3 = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.use_s3_cdn', False)
-        s3_model_ids_param = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.s3_model_ids', False)
+        use_s3 = self.env['ir.config_parameter'].sudo().get_param('aws_s3_storage.use_s3_cdn', False)
+        s3_model_ids_param = self.env['ir.config_parameter'].sudo().get_param('aws_s3_storage.s3_model_ids', False)
 
         # Default to not using S3
         for record in self:

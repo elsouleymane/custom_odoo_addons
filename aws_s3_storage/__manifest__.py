@@ -19,12 +19,12 @@
     ],
     'assets': {
         'web.assets_backend': [
-            'aws_s3_products_img/static/src/js/amazon.js',
-            'aws_s3_products_img/static/src/js/s3_image_widget.js',
-            'aws_s3_products_img/static/src/xml/amazon_dashboard_template.xml',
-            'aws_s3_products_img/static/src/xml/s3_image_widget.xml',
-            'aws_s3_products_img/static/src/scss/amazon.scss',
-            'aws_s3_products_img/static/src/scss/s3_image_widget.scss',
+            'aws_s3_storage/static/src/js/amazon.js',
+            'aws_s3_storage/static/src/js/s3_image_widget.js',
+            'aws_s3_storage/static/src/xml/amazon_dashboard_template.xml',
+            'aws_s3_storage/static/src/xml/s3_image_widget.xml',
+            'aws_s3_storage/static/src/scss/amazon.scss',
+            'aws_s3_storage/static/src/scss/s3_image_widget.scss',
         ]
     },
     'external_dependencies': {'python': ['boto3']},

@@ -12,10 +12,10 @@ class AmazonProductImage(models.Model):
 
     def setup_s3_cors(self):
         """Setup CORS for S3 bucket to allow access from any origin"""
-        access_key = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_access_key')
-        access_secret = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_secret_key')
-        bucket_name = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_bucket_name')
-        region = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_region')
+        access_key = self.env['ir.config_parameter'].sudo().get_param('aws_s3_storage.amazon_access_key')
+        access_secret = self.env['ir.config_parameter'].sudo().get_param('aws_s3_storage.amazon_secret_key')
+        bucket_name = self.env['ir.config_parameter'].sudo().get_param('aws_s3_storage.amazon_bucket_name')
+        region = self.env['ir.config_parameter'].sudo().get_param('aws_s3_storage.amazon_region')
 
         if not all([access_key, access_secret, bucket_name]):
             return False
@@ -58,10 +58,10 @@ class AmazonProductImage(models.Model):
             _logger.warning(f"Attachment {attachment.id} has no data or data is boolean.")
             return False
 
-        access_key = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_access_key')
-        access_secret = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_secret_key')
-        bucket_name = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_bucket_name')
-        region = self.env['ir.config_parameter'].sudo().get_param('aws_s3_products_img.amazon_region')
+        access_key = self.env['ir.config_parameter'].sudo().get_param('aws_s3_storage.amazon_access_key')
+        access_secret = self.env['ir.config_parameter'].sudo().get_param('aws_s3_storage.amazon_secret_key')
+        bucket_name = self.env['ir.config_parameter'].sudo().get_param('aws_s3_storage.amazon_bucket_name')
+        region = self.env['ir.config_parameter'].sudo().get_param('aws_s3_storage.amazon_region')
 
         if not all([access_key, access_secret, bucket_name]):
             _logger.error("S3 configuration incomplete. Check settings.")

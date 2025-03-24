@@ -16,6 +16,6 @@ class ProductTemplate(models.Model):
     def _compute_use_s3_storage(self):
         """Compute if S3 storage is enabled"""
         use_s3 = self.env['ir.config_parameter'].sudo().get_param(
-            'aws_s3_products_img.use_s3_cdn', 'False').lower() == 'true'
+            'aws_s3_storage.use_s3_cdn', 'False').lower() == 'true'
         for record in self:
             record.use_s3_storage = use_s3

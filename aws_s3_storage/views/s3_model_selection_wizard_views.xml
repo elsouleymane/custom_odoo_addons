@@ -4,11 +4,10 @@
         <field name="name">s3.model.selection.wizard.form</field>
         <field name="model">s3.model.selection.wizard</field>
         <field name="arch" type="xml">
-            <form string="Select Models">
+            <form string="Selection des Models">
                 <field name="config_id" invisible="1"/>
                 <field name="current_models" invisible="1"/>
-                <p class="text-muted">Select which models should have their attachments stored on S3.</p>
-                <p class="text-muted">If no models are selected, all models will use S3 storage (if enabled).</p>
+                <p class="text-muted">Selectionner les models dont les attachments doivent être stocké sur S3.</p>
                 <field name="model_ids" widget="many2many_tags"/>
                 <footer>
                     <button name="save_selection" string="Save" type="object" class="btn-primary"/>
