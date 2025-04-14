@@ -1,0 +1,21 @@
+<odoo>
+  <record id="view_currency_form_inherit_hourly_rate" model="ir.ui.view">
+    <field name="name">res.currency.form.inherit.hourly.rate</field>
+    <field name="model">res.currency</field>
+    <field name="inherit_id" ref="base.view_currency_form"/>
+    <field name="arch" type="xml">
+      <notebook position="inside">
+        <page string="Taux horaires">
+          <field name="hourly_rate_ids">
+            <tree editable="bottom">
+              <field name="datetime"/>
+              <field name="rate" string="Taux horaire"/>
+              <field name="company_id" optional="1"/>
+            </tree>
+          </field>
+        </page>
+      </notebook>
+    </field>
+  </record>
+
+</odoo>
