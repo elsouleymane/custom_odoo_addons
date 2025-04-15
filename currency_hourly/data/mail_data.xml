@@ -1,0 +1,50 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Sous-types pour le modèle res.currency.hourly.rate -->
+        <record id="mt_hourly_rate_created" model="mail.message.subtype">
+            <field name="name">Taux horaire créé</field>
+            <field name="res_model">res.currency.hourly.rate</field>
+            <field name="default" eval="True"/>
+            <field name="description">Nouveau taux horaire créé</field>
+        </record>
+
+        <record id="mt_hourly_rate_updated" model="mail.message.subtype">
+            <field name="name">Taux horaire modifié</field>
+            <field name="res_model">res.currency.hourly.rate</field>
+            <field name="default" eval="True"/>
+            <field name="description">Taux horaire modifié</field>
+        </record>
+
+        <record id="mt_hourly_rate_deleted" model="mail.message.subtype">
+            <field name="name">Taux horaire supprimé</field>
+            <field name="res_model">res.currency.hourly.rate</field>
+            <field name="default" eval="True"/>
+            <field name="description">Taux horaire supprimé</field>
+        </record>
+
+        <!-- Propagation des sous-types vers res.currency -->
+        <record id="mt_currency_hourly_rate_created" model="mail.message.subtype">
+            <field name="name">Taux horaire créé</field>
+            <field name="res_model">res.currency</field>
+            <field name="default" eval="True"/>
+            <field name="parent_id" ref="mt_hourly_rate_created"/>
+            <field name="relation_field">currency_id</field>
+        </record>
+
+        <record id="mt_currency_hourly_rate_updated" model="mail.message.subtype">
+            <field name="name">Taux horaire modifié</field>
+            <field name="res_model">res.currency</field>
+            <field name="default" eval="True"/>
+            <field name="parent_id" ref="mt_hourly_rate_updated"/>
+            <field name="relation_field">currency_id</field>
+        </record>
+
+        <record id="mt_currency_hourly_rate_deleted" model="mail.message.subtype">
+            <field name="name">Taux horaire supprimé</field>
+            <field name="res_model">res.currency</field>
+            <field name="default" eval="True"/>
+            <field name="parent_id" ref="mt_hourly_rate_deleted"/>
+            <field name="relation_field">currency_id</field>
+        </record>
+    </data>
+</odoo>
