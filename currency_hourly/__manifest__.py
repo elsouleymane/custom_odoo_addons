@@ -3,6 +3,8 @@
         'version': '1.0',
         'category': 'Accounting/Accounting',
         'summary': 'Mise à jour horaire des taux de change',
+        'author': 'Nuhu Souleymane',
+        'website': 'https://www.progistack.com',
         'description': """
             Module pour la mise à jour horaire des taux de change des devises.
         """,

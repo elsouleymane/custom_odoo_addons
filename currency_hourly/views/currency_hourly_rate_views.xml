@@ -9,7 +9,8 @@
           <field name="hourly_rate_ids">
             <tree editable="bottom">
               <field name="datetime"/>
-              <field name="inverse_company_rate" string="Taux horaire"/>
+              <field name="rate" string="Unité par XOF horaire"/>
+              <field name="inverse_company_rate" string="XOF par Unité horaire"/>
               <field name="company_id" optional="1"/>
             </tree>
           </field>

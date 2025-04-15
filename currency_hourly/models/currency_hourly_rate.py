@@ -8,12 +8,12 @@ class ResCurrencyHourlyRate(models.Model):
     _order = 'datetime desc'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    currency_id = fields.Many2one('res.currency', required=True, ondelete='cascade', tracking=True)
+    currency_id = fields.Many2one('res.currency', required=True, ondelete='cascade')
     rate = fields.Float(required=True, digits=(12, 6), string="Taux direct", compute='_compute_rate',
-                        inverse='_inverse_rate', store=True, tracking=True)
-    inverse_company_rate = fields.Float(required=True, digits=(12, 6), string="Taux horaire", tracking=True)
-    datetime = fields.Datetime(required=True, string="Date et heure", tracking=True)
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, tracking=True)
+                        inverse='_inverse_rate', store=True)
+    inverse_company_rate = fields.Float(required=True, digits=(12, 6), string="Taux horaire")
+    datetime = fields.Datetime(required=True, string="Date et heure")
+    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
 
     _sql_constraints = [
         ('uniq_currency_datetime', 'unique(currency_id, datetime, company_id)',
@@ -42,7 +42,6 @@ class ResCurrencyHourlyRate(models.Model):
                 raise ValidationError("Le taux doit être strictement positif.")
 
     def _track_subtype(self, init_values):
-        """Suivi des changements via sous-types de messages"""
         self.ensure_one()
         if 'inverse_company_rate' in init_values:
             return self.env.ref('currency_hourly.mt_hourly_rate_updated')
@@ -52,33 +51,73 @@ class ResCurrencyHourlyRate(models.Model):
     def create(self, vals_list):
         records = super(ResCurrencyHourlyRate, self).create(vals_list)
         for record in records:
-            record.message_post(
-                body=f"Nouveau taux créé : {record.inverse_company_rate:.2f} {record.company_id.currency_id.name} pour 1 {record.currency_id.name} le {record.datetime.strftime('%d/%m/%Y à %H:%M')}",
-                subtype_id=self.env.ref('currency_hourly.mt_hourly_rate_created').id
-            )
+            message = f"""
+                    <p><strong>Nouveau taux horaire</strong></p>
+                    <ul>
+                        <li>Devise : {record.currency_id.name}</li>
+                        <li>Taux : {record.inverse_company_rate:.0f} {record.company_id.currency_id.name} pour 1 {record.currency_id.name}</li>
+                        <li>Date et heure : {record.datetime.strftime('%d/%m/%Y à %H:%M')}</li>
+                    </ul>
+                    """
+            self.env['mail.message'].create({
+                'body': message,
+                'model': 'res.currency',
+                'res_id': record.currency_id.id,
+                'message_type': 'notification',
+                'subtype_id': self.env.ref('currency_hourly.mt_hourly_rate_created').id,
+            })
         return records
 
     def write(self, vals):
-        # Stocker les anciennes valeurs si nécessaire
         old_rates = {}
+        old_dates = {}
         if 'inverse_company_rate' in vals:
             old_rates = {record.id: record.inverse_company_rate for record in self}
+        if 'datetime' in vals:
+            old_dates = {record.id: record.datetime for record in self}
 
         res = super(ResCurrencyHourlyRate, self).write(vals)
 
-        if old_rates:
-            for record in self:
-                record.message_post(
-                    body=f"Taux modifié : {old_rates[record.id]:.2f} → {record.inverse_company_rate:.2f} {record.company_id.currency_id.name} pour 1 {record.currency_id.name}",
-                    subtype_id=self.env.ref('currency_hourly.mt_hourly_rate_updated').id
-                )
+        # Notifications manuelles seulement si des changements significatifs
+        for record in self:
+            changes = []
+            if record.id in old_rates and abs(old_rates[record.id] - record.inverse_company_rate) > 0.01:
+                changes.append(f"Taux : {old_rates[record.id]:.0f} → {record.inverse_company_rate:.0f}")
+            if record.id in old_dates and old_dates[record.id] != record.datetime:
+                old_date_str = old_dates[record.id].strftime('%d/%m/%Y à %H:%M')
+                new_date_str = record.datetime.strftime('%d/%m/%Y à %H:%M')
+                changes.append(f"Date et heure : {old_date_str} → {new_date_str}")
 
+            if changes:
+                message = f"""
+                <p><strong>Taux horaire modifié</strong></p>
+                <ul>
+                    <li>Devise : {record.currency_id.name}</li>
+                    <li>{'</li><li>'.join(changes)}</li>
+                    <li>Valeur actuelle : {record.inverse_company_rate:.0f} {record.company_id.currency_id.name} pour 1 {record.currency_id.name}</li>
+                </ul>
+                """
+                self.env['mail.message'].create({
+                    'body': message,
+                    'model': 'res.currency',
+                    'res_id': record.currency_id.id,
+                    'message_type': 'notification',
+                    'subtype_id': self.env.ref('currency_hourly.mt_hourly_rate_updated').id,
+                })
         return res
 
     def unlink(self):
         for record in self:
+            message = f"""
+                    <p><strong>Taux horaire supprimé</strong></p>
+                    <ul>
+                        <li>Devise : {record.currency_id.name}</li>
+                        <li>Taux : {record.inverse_company_rate:.0f} {record.company_id.currency_id.name} pour 1 {record.currency_id.name}</li>
+                        <li>Date et heure : {record.datetime.strftime('%d/%m/%Y à %H:%M')}</li>
+                    </ul>
+                    """
             self.env['mail.message'].create({
-                'body': f"Taux  supprimé : {record.inverse_company_rate:.2f} {record.company_id.currency_id.name} pour 1 {record.currency_id.name} le {record.datetime.strftime('%d/%m/%Y à %H:%M')}",
+                'body': message,
                 'model': 'res.currency',
                 'res_id': record.currency_id.id,
                 'message_type': 'notification',
@@ -87,19 +126,19 @@ class ResCurrencyHourlyRate(models.Model):
         return super(ResCurrencyHourlyRate, self).unlink()
 
 
-
 class ResCurrency(models.Model):
     _name = 'res.currency'
     _inherit = ['res.currency', 'mail.thread', 'mail.activity.mixin']
 
+    name = fields.Char(tracking=True)
     rate = fields.Float(tracking=True)
+    inverse_company_rate = fields.Float(tracking=True)
     hourly_rate_ids = fields.One2many(
         'res.currency.hourly.rate',
         'currency_id',
         string="Taux horaires",
         tracking=True,
     )
-
     rate_calculation = fields.Selection([
         ('standard', 'Taux standard'),
         ('hourly', 'Taux horaire')
@@ -121,9 +160,9 @@ class ResCurrency(models.Model):
                 ('company_id', '=', company.id),
                 ('datetime', '<=', datetime_now)
             ], order='datetime desc', limit=1)
-            from_rate = from_rate_rec.rate if from_rate_rec else 1.0
+            from_rate = from_rate_rec.inverse_company_rate if from_rate_rec else 1.0
         else:
-            from_rate = from_currency.rate
+            from_rate = from_currency.rate or 1.0
 
         to_rate = 1.0
         if to_currency.rate_calculation == 'hourly':
@@ -132,8 +171,8 @@ class ResCurrency(models.Model):
                 ('company_id', '=', company.id),
                 ('datetime', '<=', datetime_now)
             ], order='datetime desc', limit=1)
-            to_rate = to_rate_rec.rate if to_rate_rec else 1.0
+            to_rate = to_rate_rec.inverse_company_rate if to_rate_rec else 1.0
         else:
-            to_rate = to_currency.rate
+            to_rate = to_currency.inverse_company_rate or 1.0
 
         return to_rate / from_rate
